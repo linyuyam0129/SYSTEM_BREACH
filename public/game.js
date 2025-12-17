@@ -1,6 +1,7 @@
 /**
- * 網頁遊戲專題 - Final Ultimate Version (Mobile Responsive Fix)
- * Fixes: BSOD Layout on Mobile, Touch-to-Restart
+ * 網頁遊戲專題 - Cyber Infection / Terminal Breach
+ * Final Full-Stack Version (Node.js Only)
+ * Features: Mobile Optimized, Evolution, Admin Commands, Win Condition, BSOD
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -38,8 +39,7 @@ let score = 0;
 const TARGET_SCORE = 10000; // 勝利目標
 
 let gameRunning = false, isBoosting = false;
-let isOnline = true; 
-let pID = null;
+let pID = null; // 玩家 ID
 let godMode = false, rainbowMode = false;
 let input = { x: 0, y: 0 };
 
@@ -82,53 +82,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// --- API 核心 ---
+// --- API 核心 (純淨版) ---
 async function api(url, method = 'GET', body = null) {
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 1000);
-        
-        const opts = { method, headers: { 'Content-Type': 'application/json' }, signal: controller.signal };
+        const opts = { method, headers: { 'Content-Type': 'application/json' } };
         if (body) opts.body = JSON.stringify(body);
         
         const res = await fetch(url, opts);
-        clearTimeout(timeoutId);
-
-        if (!res.ok) throw new Error();
-        isOnline = true;
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
         return await res.json();
     } catch (e) { 
-        isOnline = false; 
-        return mockApi(url, method, body); 
+        console.error("Connection Failed:", e);
+        return null; 
     }
 }
 
-function mockApi(url, method, body) {
-    if (url === '/command') {
-        const cmd = body.cmd.toUpperCase();
-        if (cmd === 'SUDO_ROOT') return { success: true, effect: 'GOD_MODE', msg: '[DEMO] God Mode Enabled' };
-        if (cmd === 'COLOR_HACK') return { success: true, effect: 'RAINBOW', msg: '[DEMO] Rainbow Mode On' };
-        if (cmd.startsWith('PURGE') || cmd === 'RESET_SYSTEM_DATA') return { success: true, msg: '[DEMO] Target Deleted (Local Sim)' };
-        return { success: false, msg: 'Unknown Command' };
-    }
-    if (url === '/stats') {
-        return { 
-            totalData: Math.floor(Math.random() * 5000000 + 100000), 
-            recentLogs: [{ type: 'INFO', message: 'System initialized (Demo Mode)' }] 
-        };
-    }
-    if (url === '/scores/top') {
-        return [
-            { name: "Neo", score: 9999 },
-            { name: "Morpheus", score: 8000 },
-            { name: "You (Local)", score: 0 }
-        ];
-    }
-    return { success: true };
-}
-
+// 單位換算
 function formatBytes(bytes) {
-    if (bytes === 0) return '0 KB';
+    if (!bytes || bytes === 0) return '0 KB';
     const k = 1024; 
     const sizes = ['KB', 'MB', 'GB', 'TB', 'PB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -208,13 +179,20 @@ async function startGame() {
         if (cmdRes) {
             alert(`ADMIN LOG: ${cmdRes.msg}`);
             if (cmdRes.success) location.reload();
+        } else {
+            alert("Error: Server Offline");
         }
         return; 
     }
 
     // 2. 正常遊戲
     const data = await api('/players', 'POST', { name });
-    if (data) pID = data.id;
+    if (data && data.id) {
+        pID = data.id;
+    } else {
+        alert("無法連線至伺服器，請檢查網路！");
+        return;
+    }
 
     // 3. 作弊碼
     if (rawCmd) {
@@ -240,7 +218,7 @@ async function abortGame() {
     gameRunning = false;
     const confirmAbort = confirm("DISCONNECTING... SAVE DATA?");
     if (confirmAbort) {
-        if (isOnline && pID) await api('/scores', 'POST', { student_id: pID, score: Math.floor(score) });
+        if (pID) await api('/scores', 'POST', { student_id: pID, score: Math.floor(score) });
         alert(`SESSION ABORTED.\nDATA SAVED: ${Math.floor(score)}`);
         location.reload();
     } else {
@@ -248,60 +226,47 @@ async function abortGame() {
     }
 }
 
-// --- [修正] 勝利結局 (BSOD) - 手機版適配 ---
 async function gameWin() {
     gameRunning = false;
-    
-    // 上傳分數
-    if (isOnline && pID) await api('/scores', 'POST', { student_id: pID, score: Math.floor(score) });
+    if (pID) await api('/scores', 'POST', { student_id: pID, score: Math.floor(score) });
 
-    // 藍屏背景
+    // BSOD
     ctx.fillStyle = "#0000aa"; 
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // 設定響應式字體大小 (根據螢幕寬度調整)
     const baseSize = Math.max(16, canvas.width / 25); 
     ctx.font = `${baseSize}px monospace`;
-    ctx.textAlign = "center"; // 文字置中
+    ctx.textAlign = "center"; 
     ctx.fillStyle = "#fff";
 
     const cx = canvas.width / 2;
-    let cy = canvas.height * 0.2; // 從螢幕 20% 高度開始
+    let cy = canvas.height * 0.2; 
 
     const lines = [
-        ":(",
-        "",
+        ":(", "",
         "A problem has been detected.",
-        "System has been shut down.",
-        "",
+        "System has been shut down.", "",
         "SYSTEM_HACKED_SUCCESSFULLY",
-        `TOTAL DATA: ${Math.floor(score)} TB`,
-        "",
-        "",
-        "[ TAP SCREEN TO RESTART ]" // 手機版提示
+        `TOTAL DATA: ${Math.floor(score)} TB`, "", "",
+        "[ TAP SCREEN TO RESTART ]"
     ];
 
-    // 逐行繪製
     lines.forEach(line => {
         ctx.fillText(line, cx, cy);
         cy += baseSize * 1.5;
     });
 
-    // 點擊螢幕重新開始
     const restartHandler = () => location.reload();
     canvas.addEventListener('touchstart', restartHandler);
     canvas.addEventListener('click', restartHandler);
 }
 
-// --- 失敗結局 ---
 async function gameOver() {
     gameRunning = false;
     alert(`SYSTEM CRASHED!\nFINAL SIZE: ${Math.floor(score)} ${player.stage}`);
-    if (isOnline && pID) await api('/scores', 'POST', { student_id: pID, score: Math.floor(score) });
+    if (pID) await api('/scores', 'POST', { student_id: pID, score: Math.floor(score) });
     location.reload();
 }
 
-// --- 動畫迴圈 ---
 function animate() {
     if (!gameRunning) return;
     requestAnimationFrame(animate);
@@ -366,7 +331,7 @@ window.onload = async () => {
         boostBtn.addEventListener('mouseup', endBoost);
     }
 
-    // 載入排行榜
+    // 載入資料 (如果失敗會顯示 Offline)
     try {
         const topData = await api('/scores/top');
         const list = document.getElementById('scoreList'); 
@@ -374,32 +339,27 @@ window.onload = async () => {
             list.innerHTML = "";
             if (topData) topData.forEach(r => list.innerHTML += `<li>> ${r.name} : ${r.score}</li>`);
         }
-    } catch (e) { 
-        if(document.getElementById('scoreList')) document.getElementById('scoreList').innerHTML = "> OFFLINE MODE"; 
-        isOnline = false; 
-    }
-
-    // 載入全球統計
-    if (isOnline) {
-        try {
-            const stats = await api('/stats');
-            if (stats) {
-                const totalText = document.getElementById('globalTotal');
-                if(totalText) {
-                    totalText.innerText = formatBytes(stats.totalData);
-                    totalText.style.textShadow = "0 0 10px #ff0000";
-                }
-                const logList = document.getElementById('serverLogs'); 
-                if(logList) {
-                    logList.innerHTML = "";
-                    stats.recentLogs.forEach(log => {
-                        let color = "#00aa00";
-                        if (log.type === 'ALERT') color = "#ffaa00";
-                        if (log.type === 'SUCCESS') color = "#00f3ff";
-                        logList.innerHTML += `<li style="color:${color}">> ${log.message}</li>`;
-                    });
-                }
+        
+        const stats = await api('/stats');
+        if (stats) {
+            const totalText = document.getElementById('globalTotal');
+            if(totalText) {
+                totalText.innerText = formatBytes(stats.totalData);
+                totalText.style.textShadow = "0 0 10px #ff0000";
             }
-        } catch (e) { console.log("Stats fetch failed"); }
+            const logList = document.getElementById('serverLogs'); 
+            if(logList) {
+                logList.innerHTML = "";
+                stats.recentLogs.forEach(log => {
+                    let color = "#00aa00";
+                    if (log.type === 'ALERT') color = "#ffaa00";
+                    if (log.type === 'SUCCESS') color = "#00f3ff";
+                    logList.innerHTML += `<li style="color:${color}">> ${log.message}</li>`;
+                });
+            }
+        }
+    } catch (e) {
+        document.getElementById('serverLogs').innerHTML = "<li style='color:red;'>> ERROR: Connection Lost</li>";
+        document.getElementById('scoreList').innerHTML = "> SYSTEM OFFLINE";
     }
 };

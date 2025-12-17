@@ -61,37 +61,11 @@ body {
 }
 
 /* 資訊區 */
-.sub-title { 
-    color: #fff; 
-    background: #003300; 
-    padding: 2px 8px; 
-    margin: 10px 0 5px 0; 
-    font-size: 18px; 
-}
-.stats-box { 
-    text-align: center; 
-    border-bottom: 1px solid #005500; 
-    padding-bottom: 10px; 
-    margin-bottom: 10px; 
-}
-.log-list { 
-    list-style: none; 
-    padding: 0; 
-    margin: 0; 
-    font-size: 14px; 
-    color: #00aa00; 
-    height: 100px; 
-    overflow-y: hidden; 
-}
-.log-list li { 
-    margin-bottom: 4px; 
-    border-left: 2px solid #005500; 
-    padding-left: 5px; 
-    animation: fadeIn 0.5s; 
-}
-@keyframes fadeIn { 
-    from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } 
-}
+.sub-title { color: #fff; background: #003300; padding: 2px 8px; margin: 10px 0 5px 0; font-size: 18px; }
+.stats-box { text-align: center; border-bottom: 1px solid #005500; padding-bottom: 10px; margin-bottom: 10px; }
+.log-list { list-style: none; padding: 0; margin: 0; font-size: 14px; color: #00aa00; height: 100px; overflow-y: hidden; }
+.log-list li { margin-bottom: 4px; border-left: 2px solid #005500; padding-left: 5px; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
 /* 進化表 */
 .evo-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 16px; }

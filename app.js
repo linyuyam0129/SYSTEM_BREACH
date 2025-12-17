@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000; // 支援 Render 的 PORT 環境變數
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));

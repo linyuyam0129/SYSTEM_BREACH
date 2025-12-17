@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 掃描線背景特效 -->
     <div class="scanlines"></div>
 
+    <!-- 主儀表板 (登入畫面) -->
     <div id="loginScreen">
         <h1 class="terminal-title">SYSTEM_BREACH</h1>
         
         <div class="dashboard-layout">
             
+            <!-- 左側：資訊面板 -->
             <div class="panel left-panel">
                 <div class="panel-header">>> SYSTEM LOGS & STATS</div>
                 
@@ -38,6 +41,7 @@
                 </div>
             </div>
 
+            <!-- 右側：操作面板 -->
             <div class="panel right-panel">
                 <div class="panel-header">>> LOGIN & CONSOLE</div>
                 
@@ -63,19 +67,24 @@
         </div>
     </div>
 
+    <!-- 遊戲畫布 -->
     <canvas id="gameCanvas"></canvas>
     
+    <!-- 遊戲中介面 -->
     <div id="uiOverlay" style="display:none;">
         <div class="top-bar">
             <div class="status-line">
                 STATUS: <span style="color:#0f0">INJECTED</span> | 
                 DATA: <span id="scoreDisplay" style="color:#fff">0</span>
             </div>
+            <!-- 斷線按鈕 -->
             <button class="abort-btn" onclick="abortGame()">[ ABORT / SAVE ]</button>
         </div>
         
+        <!-- 手機版加速按鈕 -->
         <button id="boostBtn" class="boost-button">⚡</button>
 
+        <!-- 系統負載進度條 (置頂) -->
         <div class="progress-container">
             <div class="progress-label">SYSTEM LOAD (GOAL: 10000)</div>
             <div class="progress-bar-bg">
