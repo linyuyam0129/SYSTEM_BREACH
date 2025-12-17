@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TERMINAL BREACH: FINAL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="scanlines"></div>
+
+    <div id="loginScreen">
+        <h1 class="terminal-title">SYSTEM_BREACH</h1>
+        
+        <div class="dashboard-layout">
+            
+            <div class="panel left-panel">
+                <div class="panel-header">>> SYSTEM LOGS & STATS</div>
+                
+                <div class="stats-box">
+                    <p>TOTAL_SERVER_LEAK (全球總外洩):</p>
+                    <h2 id="globalTotal" style="color:#ff0000; margin:0;">CALCULATING...</h2>
+                </div>
+
+                <div class="manual-section">
+                    <p class="sub-title">[ SERVER ACTIVITY LOG ]</p>
+                    <ul id="serverLogs" class="log-list">
+                        <li>> Connecting to log server...</li>
+                    </ul>
+                </div>
+
+                <div class="evo-section">
+                    <p class="sub-title">[ EVOLUTION CHART ]</p>
+                    <div class="evo-row"><span class="badge kb">KB</span> VIRUS (初始)</div>
+                    <div class="evo-row"><span class="badge mb">MB</span> MALWARE (500)</div>
+                    <div class="evo-row"><span class="badge gb">GB</span> TROJAN (2000)</div>
+                    <div class="evo-row tb-row"><span class="badge tb">TB</span> ROOT (5000)</div>
+                </div>
+            </div>
+
+            <div class="panel right-panel">
+                <div class="panel-header">>> LOGIN & CONSOLE</div>
+                
+                <div class="login-box">
+                    <div class="input-group">
+                        <span class="prompt">usr@root:~$</span>
+                        <input type="text" id="playerName" placeholder="Enter_ID" maxlength="10">
+                    </div>
+                    
+                    <div class="input-group" style="border-color:#555;">
+                        <span class="prompt" style="color:#aaa;">cmd:~$</span>
+                        <input type="text" id="adminCmd" placeholder="Command (Optional)" style="color:#aaa;">
+                    </div>
+                    
+                    <button onclick="startGame()">[ INITIALIZE ]</button>
+                </div>
+
+                <div id="leaderboard">
+                    <p class="sub-title">// TOP_HACKERS</p>
+                    <ul id="scoreList">Connecting...</ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="uiOverlay" style="display:none;">
+        <div class="top-bar">
+            <div class="status-line">
+                STATUS: <span style="color:#0f0">INJECTED</span> | 
+                DATA: <span id="scoreDisplay" style="color:#fff">0</span>
+            </div>
+            <button class="abort-btn" onclick="abortGame()">[ ABORT / SAVE ]</button>
+        </div>
+        
+        <button id="boostBtn" class="boost-button">⚡</button>
+
+        <div class="progress-container">
+            <div class="progress-label">SYSTEM LOAD (GOAL: 10000)</div>
+            <div class="progress-bar-bg">
+                <div id="progressBar" class="progress-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

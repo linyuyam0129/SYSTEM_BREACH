@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #000;
+    color: #0f0;
+    font-family: 'VT323', monospace;
+    touch-action: none;
+}
+
+/* 掃描線 */
+.scanlines {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* 登入容器 */
+#loginScreen {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    max-height: 95vh;
+    overflow-y: auto;
+}
+
+.terminal-title {
+    font-size: 48px;
+    margin: 0 0 20px 0;
+    text-shadow: 4px 4px #003300;
+    text-align: center;
+    letter-spacing: 5px;
+}
+
+/* 儀表板佈局 */
+.dashboard-layout { display: flex; gap: 20px; }
+@media (max-width: 768px) { .dashboard-layout { flex-direction: column; gap: 15px; } }
+
+.panel {
+    flex: 1;
+    border: 2px solid #005500;
+    background: rgba(0, 10, 0, 0.9);
+    padding: 15px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+    position: relative;
+}
+
+.panel-header {
+    position: absolute;
+    top: -12px; left: 10px;
+    background: #000;
+    padding: 0 10px;
+    color: #008800;
+    font-size: 18px;
+}
+
+/* 資訊區 */
+.sub-title { 
+    color: #fff; 
+    background: #003300; 
+    padding: 2px 8px; 
+    margin: 10px 0 5px 0; 
+    font-size: 18px; 
+}
+.stats-box { 
+    text-align: center; 
+    border-bottom: 1px solid #005500; 
+    padding-bottom: 10px; 
+    margin-bottom: 10px; 
+}
+.log-list { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    font-size: 14px; 
+    color: #00aa00; 
+    height: 100px; 
+    overflow-y: hidden; 
+}
+.log-list li { 
+    margin-bottom: 4px; 
+    border-left: 2px solid #005500; 
+    padding-left: 5px; 
+    animation: fadeIn 0.5s; 
+}
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } 
+}
+
+/* 進化表 */
+.evo-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 16px; }
+.badge { display: inline-block; width: 30px; text-align: center; border: 1px solid currentColor; margin-right: 10px; font-weight: bold; }
+.tb-row { color: #ff0000; border: 1px dashed #ff0000; padding: 5px; background: rgba(50, 0, 0, 0.3); }
+
+/* 操作區 */
+.input-group { display: flex; align-items: center; background: #001100; border: 1px solid #0f0; margin: 20px 0 10px 0; padding: 8px; }
+.prompt { color: #0f0; margin-right: 10px; white-space: nowrap; }
+input { background: transparent; border: none; color: #fff; font-family: 'VT323', monospace; font-size: 20px; width: 100%; outline: none; }
+button { background: #0f0; color: #000; border: none; padding: 10px; font-family: 'VT323', monospace; font-size: 24px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 20px; transition: 0.2s; }
+button:hover { background: #fff; box-shadow: 0 0 20px #0f0; }
+
+#leaderboard ul { list-style: none; padding: 0; margin: 0; color: #00bb00; font-size: 16px; max-height: 150px; overflow-y: auto; }
+#leaderboard li { border-bottom: 1px dotted #004400; padding: 3px 0; }
+
+/* 遊戲中 UI */
+#uiOverlay { position: absolute; top: 15px; left: 15px; width: 100%; pointer-events: none; }
+.top-bar { display: flex; justify-content: space-between; align-items: center; pointer-events: auto; width: 95%; }
+.status-line { font-size: 22px; background: rgba(0, 0, 0, 0.8); padding: 5px 10px; border: 1px solid #005500; display: inline-block; }
+
+/* 斷線按鈕 */
+.abort-btn { background: #550000; color: #fff; border: 1px solid #ff0000; padding: 5px 15px; font-size: 16px; width: auto; margin: 0; cursor: pointer; }
+.abort-btn:hover { background: #ff0000; box-shadow: 0 0 10px #ff0000; }
+
+/* 進度條 (置頂版) */
+.progress-container {
+    position: absolute;
+    top: 60px; left: 50%; transform: translateX(-50%);
+    width: 60%; max-width: 400px;
+    text-align: center; pointer-events: none; opacity: 0.9; z-index: 10;
+}
+.progress-label { color: #0f0; margin-bottom: 3px; font-size: 12px; text-shadow: 1px 1px #000; letter-spacing: 1px; }
+.progress-bar-bg { width: 100%; height: 6px; background: rgba(0, 20, 0, 0.6); border: 1px solid #005500; border-radius: 3px; overflow: hidden; }
+.progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #0f0, #00f3ff); transition: width 0.2s; box-shadow: 0 0 5px #0f0; }
+
+/* 手機加速按鈕 */
+.boost-button {
+    position: fixed;
+    bottom: 50px; right: 30px;
+    width: 80px; height: 80px;
+    background: rgba(0, 50, 0, 0.5);
+    border: 2px solid #0f0; border-radius: 50%;
+    color: #0f0; font-size: 30px; font-weight: bold;
+    z-index: 100; cursor: pointer; pointer-events: auto;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    outline: none; display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 15px #0f0;
+    transition: transform 0.1s, background 0.1s;
+}
+.boost-button:active { background: rgba(0, 255, 0, 0.3); transform: scale(0.95); box-shadow: 0 0 5px #0f0; }
+@media (min-width: 1024px) { /* .boost-button { display: none; } */ }
